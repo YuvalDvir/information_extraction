@@ -41,7 +41,7 @@ def find_birth_day(person_url):
     for t in doc.xpath("//tr[th[text() = 'Born']]//*[contains(@class, 'bday')]/."):
         bday = t.text
 
-    add_triple_to_ontology(bday, 'birth_date_of', person_url)
+    add_triple_to_ontology(bday, 'birth_date_of', wikipedia_prefix + person_url)
 
 
 def find_birth_place(person_url):
@@ -53,7 +53,7 @@ def find_birth_place(person_url):
     for t in doc.xpath("//tr[th[text() = 'Born']]//a/text()"):
         birth_place += t + ", "
 
-    add_triple_to_ontology(birth_place, 'birth_place_of', person_url)
+    add_triple_to_ontology(birth_place, 'birth_place_of', wikipedia_prefix + person_url)
 
 
 def find_capital(doc, country_url):
@@ -171,8 +171,7 @@ def iterate_countries():
         find_information_of_country_by_link(country, url)
 
 
-if __name__ == "__main__":
-    # Load all countries names into the list
+def create_ontology():    # Load all countries names into the list
     load_countries_from_url()
     iterate_countries()
     #find_information_of_country_by_link('Andorra', 'https://en.wikipedia.org/wiki/Andorra')
