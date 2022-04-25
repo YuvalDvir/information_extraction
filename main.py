@@ -78,17 +78,27 @@ def create_query(input):
             """ % (predicate1, country, predicate2)
 
 
+    elif re.search('List all countries whose capital name contains the string \w+', input):
+        string = re.search('the string (\w+)', input).group(1)
 
+        query = """
+            SELECT ?b
+            WHERE
+            {
+                ?a <%s> ?b .
+                filter contains(str(?a), '%s')
+            }
+            """ % ('http://example.org/capital_of', string)
     return query
 
 
 if __name__ == "__main__":
-    #ontology.create_ontology()
+    ontology.create_ontology()
 
     g2 = rdflib.Graph()
     g2.parse('ontology.nt', format='nt')
 
-    quer = create_query("Where was the president of China born?")
+    quer = create_query("List all countries whose capital name contains the string New")
     print(quer)
 
 
