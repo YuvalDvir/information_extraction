@@ -77,7 +77,6 @@ def create_query(input):
             }
             """ % (predicate1, country, predicate2)
 
-
     elif re.search('List all countries whose capital name contains the string \w+', input):
         string = re.search('the string (\w+)', input).group(1)
 
@@ -89,16 +88,35 @@ def create_query(input):
                 filter contains(str(?a), '%s')
             }
             """ % ('http://example.org/capital_of', string)
+
+    elif re.search('How many (.*) are also', input):
+        form1 = re.search('How many (.*) are', input).group(1).replace(" ", "_")
+        form2 = re.search('also (.*)\?', input).group(1).replace(" ", "_")
+        form_predicate = 'http://example.org/form_of_government_in'
+
+        print(form1, form2)
+        query = """
+            SELECT (COUNT (*) AS ?count)
+            WHERE
+            {
+                ?a1 <%s> ?b .
+                ?a2 <%s> ?b .
+                filter contains(str(?a1), '%s')
+                filter contains(str(?a2), '%s')
+            }
+            """ % (form_predicate, form_predicate, form1, form2)
     return query
 
 
 if __name__ == "__main__":
-    ontology.create_ontology()
+    #ontology.create_ontology()
 
+    """
+    """
     g2 = rdflib.Graph()
     g2.parse('ontology.nt', format='nt')
 
-    quer = create_query("List all countries whose capital name contains the string New")
+    quer = create_query("How many dictatorship are also Presidential?")
     print(quer)
 
 
