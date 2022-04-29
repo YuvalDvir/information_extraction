@@ -51,12 +51,18 @@ def find_birth_place(person_url):
     r = requests.get(wikipedia_prefix + person_url)
     doc = lxml.html.fromstring(r.content)
 
-    birth_place = ''
+    birth_place = []
+    birth_place_string = ''
+    for t in doc.xpath("//tr[th[text() = 'Born']]/td/text()"):
+        birth_place.append(t)
 
-    for t in doc.xpath("//tr[th[text() = 'Born']]//a/text()"):
-        birth_place += t + ", "
+    for t in doc.xpath("//tr[th[text() = 'Born']]/td/a/text()"):
+        birth_place.append(t)
 
-    add_triple_to_ontology(example_prefix + birth_place, example_prefix + 'birth_place_of', wikipedia_prefix + person_url)
+    if birth_place:
+        birth_place_string = birth_place[-1].strip('\',').lstrip(' ')
+
+    add_triple_to_ontology(example_prefix + birth_place_string, example_prefix + 'birth_place_of', wikipedia_prefix + person_url)
 
 
 def find_capital(doc, country_url):
@@ -65,8 +71,10 @@ def find_capital(doc, country_url):
     for t in doc.xpath("//tr[th[text() = 'Capital']]/td/a[1]/text()"):
         capital += t
 
-    add_triple_to_ontology(example_prefix + capital, example_prefix + 'capital_of', country_url)
+    for t in doc.xpath("//tr[th[text() = 'Capital']]/td/div/ul/li[1]/a/text()"):
+        capital += t
 
+    add_triple_to_ontology(example_prefix + capital, example_prefix + 'capital_of', country_url)
 
 def find_area(doc, country_url):
     area = ''
@@ -126,8 +134,9 @@ def find_president(doc, country_url):
 
     add_triple_to_ontology(wikipedia_prefix + president_link, example_prefix + 'president_of', country_url)
 
-    find_birth_day(president_link)
-    find_birth_place(president_link)
+    if president != '':
+        find_birth_day(president_link)
+        find_birth_place(president_link)
 
 
 def find_prime_minister(doc, country_url):
@@ -140,8 +149,9 @@ def find_prime_minister(doc, country_url):
 
     add_triple_to_ontology(wikipedia_prefix + prime_minister_link, example_prefix + 'prime_minister_of', country_url)
 
-    find_birth_day(prime_minister_link)
-    find_birth_place(prime_minister_link)
+    if prime_minister != '':
+        find_birth_day(prime_minister_link)
+        find_birth_place(prime_minister_link)
 
 
 def find_information_of_country_by_link(country, country_url):
@@ -174,8 +184,10 @@ def iterate_countries():
         find_information_of_country_by_link(country, url)
 
 
+
 def create_ontology():    # Load all countries names into the list
-    load_countries_from_url()
+    #load_countries_from_url()
     iterate_countries()
-    #find_information_of_country_by_link('Andorra', 'https://en.wikipedia.org/wiki/Andorra')
+    find_information_of_country_by_link('Indonesia', 'https://en.wikipedia.org/wiki/Indonesia')
     g.serialize("./ontology.nt", format="nt")
+    #g.serialize("./ontology_test.nt", format="nt")
