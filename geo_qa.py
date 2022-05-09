@@ -21,7 +21,7 @@ def tester():
     answers = []
     success = 0
     fails = 0
-    file = open('qa _27.4.csv')
+    file = open('qa-85.csv')
     csvreader = csv.reader(file)
     rows = []
     for i, row in enumerate(csvreader):
@@ -233,7 +233,6 @@ def test_question(question):
 
 if __name__ == "__main__":
 
-
     list_of_arguments = sys.argv
 
     if len(list_of_arguments) < 2:
@@ -250,7 +249,7 @@ if __name__ == "__main__":
         ask_question(list_of_arguments[2])
 
     if list_of_arguments[1] == 'test':
-        tester()
+        tester()    
 
 
 
